@@ -1,18 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-
-// Find this line at the top:
-
-// And CHANGE it to:
-import api from '../api/axiosConfig';
-
-// Then, find the API call inside handleSubmit()
-// const { data } = await axios.post(...)
-// And CHANGE it to:
-const { data } = await api.post(url, payload);
-const API_BASE_URL = "http://localhost:3000/api/v1";
+import api from '../api/axiosConfig'; // <-- Use the new 'api' instance
 
 const AuthForm = ({ isSignIn }) => {
     const [formData, setFormData] = useState({
@@ -38,17 +27,20 @@ const AuthForm = ({ isSignIn }) => {
             return;
         }
 
-        const url = isSignIn ? `${API_BASE_URL}/users/signin` : `${API_BASE_URL}/users/signup`;
+        // The URL is now simpler because the base URL is in the config
+        const url = isSignIn ? `/users/signin` : `/users/signup`;
         const payload = isSignIn
             ? { email: formData.email, password: formData.password }
             : { name: formData.name, email: formData.email, password: formData.password };
 
         try {
-            const { data } = await axios.post(url, payload);
+            // Use 'api.post' instead of 'axios.post'
+            const { data } = await api.post(url, payload);
             localStorage.setItem("token", data.token);
             toast.success(`Successfully ${isSignIn ? 'signed in' : 'signed up'}!`);
             navigate('/dashboard');
         } catch (error) {
+            // The catch block is simpler now because the interceptor handles session errors
             const errorMessage = error.response?.data?.message || 'An error occurred';
             toast.error(errorMessage);
         } finally {
@@ -80,7 +72,6 @@ const AuthForm = ({ isSignIn }) => {
     );
 };
 
-// Simple reusable Input component
 const Input = (props) => (
     <input
         {...props}

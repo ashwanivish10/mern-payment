@@ -1,17 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-
-// Find this line at the top:
-
-// And CHANGE it to:
-import api from '../api/axiosConfig';
-
-// Then, find the API call inside handleTransfer()
-// await axios.post(...)
-// And CHANGE it to:
-await api.post('/account/transfer', /* ... */);
-const API_BASE_URL = "http://localhost:3000/api/v1";
+import api from '../api/axiosConfig'; // <-- Use the new 'api' instance
 
 const DashboardUI = ({ data, onTransferSuccess }) => {
     const [toUpi, setToUpi] = useState('');
@@ -29,13 +18,13 @@ const DashboardUI = ({ data, onTransferSuccess }) => {
         }
         
         try {
-            const token = localStorage.getItem("token");
-            await axios.post(`${API_BASE_URL}/account/transfer`,
-                { to: toUpi, amount: Number(amount) },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            // Use 'api.post' and remove manual headers
+            await api.post('/account/transfer', { 
+                to: toUpi, 
+                amount: Number(amount) 
+            });
             toast.success("Transfer successful!");
-            onTransferSuccess(); // Refresh dashboard data
+            onTransferSuccess();
             setToUpi('');
             setAmount('');
         } catch (error) {
@@ -48,7 +37,6 @@ const DashboardUI = ({ data, onTransferSuccess }) => {
 
     return (
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Left Column: Balance & Send Money */}
             <div className="md:col-span-1 space-y-6">
                 <InfoCard title="Your UPI ID" content={data.upiId} />
                 <InfoCard title="Your Balance" content={`₹ ${data.balance.toFixed(2)}`} isBalance />
@@ -61,17 +49,14 @@ const DashboardUI = ({ data, onTransferSuccess }) => {
                     loading={loading}
                 />
             </div>
-
-            {/* Right Column: Transaction History */}
             <div className="md:col-span-2">
-                <TransactionHistory history={data.history} currentUserUpi={data.upiId} />
+                <TransactionHistory history={data.history} />
             </div>
         </div>
     );
 };
 
-// Sub-components for better organization
-
+// Sub-components do not need to be changed
 const InfoCard = ({ title, content, isBalance = false }) => (
     <div className="bg-white p-6 rounded-lg shadow">
         <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
@@ -138,5 +123,6 @@ const TransactionItem = ({ tx }) => {
         </div>
     );
 };
+
 
 export default DashboardUI;

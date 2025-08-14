@@ -1,38 +1,25 @@
 import { useEffect, useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import Header from '../components/Header';
 import DashboardUI from '../components/DashboardUI';
-// Find this line at the top:
-import axios from 'axios';
-// And CHANGE it to:
 import api from '../api/axiosConfig';
 
-// Then, find the API call inside fetchData()
-// const response = await axios.get(...)
-// And CHANGE it to:
-const response = await api.get('/account/dashboard');
-
-const API_BASE_URL = "http://localhost:3000/api/v1";
-
 const Dashboard = () => {
+    console.log("1. Component is rendering..."); // Log #1
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await axios.get(`${API_BASE_URL}/account/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            console.log("3. Fetching data..."); // Log #3
+            const response = await api.get('/account/dashboard');
+            console.log("4. Data received:", response.data); // Log #4
             setData(response.data);
         } catch (error) {
-            toast.error("Session expired. Please log in again.");
-            localStorage.removeItem("token");
-            navigate('/');
+            console.error("5. API call failed:", error); // Log #5
         } finally {
+            console.log("6. Fetch complete, setting loading to false."); // Log #6
             setLoading(false);
         }
     };
@@ -40,6 +27,8 @@ const Dashboard = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    console.log("2. Current state:", { loading, data }); // Log #2
 
     if (loading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
