@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// Find this line at the top:
+
+// And CHANGE it to:
+import api from '../api/axiosConfig';
+
+// Then, find the API call inside handleSubmit()
+// const { data } = await axios.post(...)
+// And CHANGE it to:
+const { data } = await api.post(url, payload);
 const API_BASE_URL = "http://localhost:3000/api/v1";
 
 const AuthForm = ({ isSignIn }) => {

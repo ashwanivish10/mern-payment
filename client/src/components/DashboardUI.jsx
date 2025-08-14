@@ -2,6 +2,15 @@ import { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// Find this line at the top:
+
+// And CHANGE it to:
+import api from '../api/axiosConfig';
+
+// Then, find the API call inside handleTransfer()
+// await axios.post(...)
+// And CHANGE it to:
+await api.post('/account/transfer', /* ... */);
 const API_BASE_URL = "http://localhost:3000/api/v1";
 
 const DashboardUI = ({ data, onTransferSuccess }) => {

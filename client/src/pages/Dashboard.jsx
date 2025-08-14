@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Header from '../components/Header';
 import DashboardUI from '../components/DashboardUI';
+// Find this line at the top:
+import axios from 'axios';
+// And CHANGE it to:
+import api from '../api/axiosConfig';
+
+// Then, find the API call inside fetchData()
+// const response = await axios.get(...)
+// And CHANGE it to:
+const response = await api.get('/account/dashboard');
 
 const API_BASE_URL = "http://localhost:3000/api/v1";
 
